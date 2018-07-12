@@ -1,0 +1,16 @@
+{
+    "name": "Kallax",
+    "description": "保存到Kallax",
+    "version": "1.0",
+    "background": {
+        "scripts": ["axios.min.js","background-script.js"]
+    },
+    "permissions": [
+        "tabs", "http://*/*", "https://*/*","cookies","notifications"
+    ],
+    "browser_action": {
+        "default_title": "Kallax",
+        "default_icon": "logo2.png"
+    },
+    "manifest_version": 2
+}
