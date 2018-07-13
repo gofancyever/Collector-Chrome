@@ -1,7 +1,7 @@
 
 function openLogin() {
     console.log('openLogin')
-    chrome.tabs.update(null, { url: "http://kallax.sstar.xin" });
+    chrome.tabs.create({ url: "http://kallax.sstar.xin" });
 }
 function showNoti(status){
     var status_msg = ''
@@ -48,6 +48,16 @@ function openList(token) {
 
     });
 }
+function getLocalStorage(){
+    chrome.storage.sync.get(['token'], function(result) {
+        console.log('Settings retrieved', result.value);
+        if (result.value == null){
+            openLogin()
+        }else{
+            openList(result.value)
+        }
+      });
+}
 function browserActionClick() {
     // 判断当前 是否有userkey
     chrome.cookies.get({
@@ -56,11 +66,22 @@ function browserActionClick() {
     },
         function (cookie) {
             console.log(cookie);
-            if (cookie == null) {// 若果没有 跳转到登录页
-                openLogin()
+            if (cookie == null) {// 若果没有 检查localSotrage
+                getLocalStorage()
+                
             } else {// 如果有 判断当前页面类型
                 openList(cookie.value)
             }
         });
 }
-chrome.browserAction.onClicked.addListener(browserActionClick);
+function contextMenuClick(info,tab){
+    console.log(tab);
+    browserActionClick()
+}
+chrome.browserAction.onClicked.addListener(getLocalStorage);
+chrome.contextMenus.create({"title": "Save to Kallax",onclick:contextMenuClick}, function() {
+    console.log('contextMenus action');
+    if (chrome.extension.lastError) {
+      console.log("Got expected error: " + chrome.extension.lastError.message);
+    }
+  });
